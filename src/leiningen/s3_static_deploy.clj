@@ -6,6 +6,7 @@
   (:import com.amazonaws.auth.BasicAWSCredentials
            com.amazonaws.services.s3.AmazonS3Client
            com.amazonaws.ClientConfiguration
+           com.amazonaws.SDKGlobalConfiguration
            com.amazonaws.services.s3.model.BucketWebsiteConfiguration))
 
 (defn- s3-client*
@@ -55,9 +56,11 @@
 (defn s3-static-deploy [project & args]
   "Deploy a local directory as a static website in AWS S3."
   (let [aws (:aws project)
-        credentials (select-keys aws [:access-key :secret-key])
+        credentials (select-keys aws [:access-key :secret-key :endpoint])
         {bucket :bucket local-root :local-root} (:s3-static-deploy aws)]
 
+    (when (:endpoint credentials)
+      (System/setProperty SDKGlobalConfiguration/ENABLE_S3_SIGV4_SYSTEM_PROPERTY "true"))
     (println (str "Deploying " local-root " to " bucket))
     (when-not (bucket-exists-in-account? credentials bucket)
       (s3/create-bucket credentials bucket))

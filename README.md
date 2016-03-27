@@ -27,8 +27,15 @@ So inside your `project.clj` do:
 `:aws {
         :access-key ~(System/getenv "AWS_ACCESS_KEY")
         :secret-key ~(System/getenv "AWS_SECRET_KEY")
+        :endpoint "REGION-SPECIFIC ENDPOINT"
         :s3-static-deploy {:bucket "THE BUCKET YOU WANT TO DEPLOY TO"
                            :local-root "LOCAL DIRECTORY YOU WANT TO DEPLOY FROM"}}`
+
+The `:endpoint` keyword is only required if you want to connect to
+a region-specific endpoint (see [list of regions and
+endpoints](http://docs.aws.amazon.com/general/latest/gr/rande.html#s3_region)).
+This may be necessary for buckets in regions that only support AWS Signature
+Version 4.
 
 ## Deploy
 
